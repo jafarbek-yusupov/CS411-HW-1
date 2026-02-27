@@ -96,19 +96,19 @@ class Board:
         '''
         hamming distance - number of positions where the values differ.
         so the algorithm for case of board cells/tiles (where board - 2D list of integers) is:
-        - for position [row, column] compare current state tile with goal state tile at given position
+        - for position [row, column] compare current state cell with goal state cell at given position
         - - board[row][column] != goal[row][column]
         - if mismatch -> increase counter
         - the resulting counter will be the h score for our search algorithm
-        (this method applies the same logic for h func as 'misplaced tiles counter' heuristic method)
         '''
         count = 0
         for row in range(self.size):
             for column in range(self.size):
                 cell = self.state[row][column]
-                goalRow, goalCol = divmod(cell - 1, self.size)
-                if row != goalRow or column != goalCol:
-                    count += 1
+                if cell != 0:
+                    goalRow, goalColumn = divmod(cell - 1, self.size)
+                    if row != goalRow or column != goalColumn:
+                        count += 1
         return count
     
     @property
@@ -242,7 +242,7 @@ def solve(board: Board, heuristic: HeuristicType = HeuristicType.MANHATTAN) -> S
     def _getPreciseCurrentTime() -> float:
         return time.perf_counter()
 
-    def _converToMsAndRoundTime(timestamp: float, precisionDigits = 3) -> float:
+    def _convertToMsAndRoundTime(timestamp: float, precisionDigits = 3) -> float:
         return round(timestamp*1000, precisionDigits)
     
     if not board.isSolvable: return SolutionResult()
@@ -267,7 +267,7 @@ def solve(board: Board, heuristic: HeuristicType = HeuristicType.MANHATTAN) -> S
             return SolutionResult(
                 solvable=True, 
                 visitedNodeCount=visitedCount, 
-                timeMs=_converToMsAndRoundTime(_getPreciseCurrentTime() - t0), 
+                timeMs=_convertToMsAndRoundTime(_getPreciseCurrentTime() - t0), 
                 pathList=current.path
             )
 
@@ -280,7 +280,7 @@ def solve(board: Board, heuristic: HeuristicType = HeuristicType.MANHATTAN) -> S
                     heuristic=heuristic
                 )
                 heapq.heappush(nodeMinHeap, child)
-    return SolutionResult(visitedNodeCount=visitedCount, timeMs=_converToMsAndRoundTime(_getPreciseCurrentTime() - t0))
+    return SolutionResult(visitedNodeCount=visitedCount, timeMs=_convertToMsAndRoundTime(_getPreciseCurrentTime() - t0))
 
 class Tester:
     @staticmethod
